@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Dashboard API Blog</title>
+  <style>
+    body {
+      font-family: Arial;
+      background: #0f172a;
+      color: white;
+      margin: 0;
+      padding: 20px;
+    }
+
+    h1 {
+      text-align: center;
+    }
+
+    .container {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 20px;
+    }
+
+    .card {
+      background: #1e293b;
+      padding: 20px;
+      border-radius: 10px;
+    }
+
+    .stats {
+      display: flex;
+      justify-content: space-around;
+    }
+
+    .stat {
+      text-align: center;
+    }
+
+    .articles {
+      grid-column: span 2;
+    }
+
+    button {
+      padding: 10px;
+      margin-top: 10px;
+      background: #38bdf8;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+
+<body>
+
+<h1>📊 Dashboard Blog API</h1>
+
+<div class="container">
+
+  <!-- Stats -->
+  <div class="card">
+    <h2>Statistiques API</h2>
+    <div class="stats">
+      <div class="stat">GET: <span id="get">0</span></div>
+      <div class="stat">POST: <span id="post">0</span></div>
+      <div class="stat">PUT: <span id="put">0</span></div>
+      <div class="stat">DELETE: <span id="delete">0</span></div>
+    </div>
+    <button onclick="loadStats()">Actualiser</button>
+  </div>
+
+  <!-- Articles -->
+  <div class="card articles">
+    <h2>Articles</h2>
+    <ul id="articles"></ul>
+    <button onclick="loadArticles()">Charger articles</button>
+  </div>
+
+</div>
+
+<script>
+
+const API_URL = "https://ton-lien.onrender.com";
+
+// Charger stats
+async function loadStats() {
+  const res = await fetch(`${API_URL}/api/stats`);
+  const data = await res.json();
+
+  document.getElementById("get").innerText = data.get;
+  document.getElementById("post").innerText = data.post;
+  document.getElementById("put").innerText = data.put;
+  document.getElementById("delete").innerText = data.delete;
+}
+
+// Charger articles
+async function loadArticles() {
+  const res = await fetch(`${API_URL}/api/articles`);
+  const data = await res.json();
+
+  const list = document.getElementById("articles");
+  list.innerHTML = "";
+
+  data.forEach(article => {
+    const li = document.createElement("li");
+    li.innerText = `${article.titre} - ${article.auteur}`;
+    list.appendChild(li);
+  });
+}
+
+</script>
+
+</body>
+</html>

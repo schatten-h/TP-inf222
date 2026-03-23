@@ -4,6 +4,8 @@ const swaggerJsdoc = require('swagger-jsdoc');
 const express = require('express');
 const app = express();
 
+const API_URL = "https://tp-inf222.onrender.com";
+
 app.use(express.json());
 
 // ✅ Données
@@ -173,6 +175,12 @@ const options = {
 const swaggerSpec = swaggerJsdoc(options);
 
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+
+const path = require('path');
+
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, 'dashboard.html'));
+});
 
 // 🚀 Lancement serveur
 const PORT = process.env.PORT || 3000;
