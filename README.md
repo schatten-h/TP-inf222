@@ -15,6 +15,6 @@ Cette API permet de gérer des articles de blog (CRUD + recherche).
 
 ```bash
 git clone https://github.com/schatten-h/TP-inf222.git
-cd blog-api-inf222
+cd TP-inf222
 npm install
 node server.js
