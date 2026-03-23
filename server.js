@@ -6,6 +6,7 @@ const app = express();
 
 app.use(express.json());
 
+// ✅ Données
 let articles = [
   {
     id: 1,
@@ -16,30 +17,24 @@ let articles = [
   }
 ];
 
+// ✅ Stats
+let stats = {
+  get: 0,
+  post: 0,
+  put: 0,
+  delete: 0
+};
+
 // 🔹 Créer un article
 /**
  * @swagger
  * /api/articles:
  *   post:
  *     summary: Créer un article
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               titre:
- *                 type: string
- *               contenu:
- *                 type: string
- *               auteur:
- *                 type: string
- *     responses:
- *       201:
- *         description: Article créé
  */
 app.post('/api/articles', (req, res) => {
+  stats.post++;
+
   const { titre, contenu, auteur } = req.body;
 
   if (!titre || !auteur) {
@@ -65,32 +60,22 @@ app.post('/api/articles', (req, res) => {
  * /api/articles:
  *   get:
  *     summary: Récupérer tous les articles
- *     responses:
- *       200:
- *         description: Liste des articles
  */
 app.get('/api/articles', (req, res) => {
+  stats.get++;
   res.json(articles);
 });
+
 // 🔹 Lire un article par ID
 /**
  * @swagger
  * /api/articles/{id}:
  *   get:
  *     summary: Récupérer un article par ID
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         schema:
- *           type: integer
- *     responses:
- *       200:
- *         description: Article trouvé
- *       404:
- *         description: Article non trouvé
  */
 app.get('/api/articles/:id', (req, res) => {
+  stats.get++;
+
   const article = articles.find(a => a.id == req.params.id);
 
   if (!article) {
@@ -101,33 +86,15 @@ app.get('/api/articles/:id', (req, res) => {
 });
 
 // 🔹 Modifier un article
-
 /**
  * @swagger
  * /api/articles/{id}:
  *   put:
  *     summary: Modifier un article
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         schema:
- *           type: integer
- *     requestBody:
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               titre:
- *                 type: string
- *               contenu:
- *                 type: string
- *     responses:
- *       200:
- *         description: Article modifié
  */
 app.put('/api/articles/:id', (req, res) => {
+  stats.put++;
+
   const article = articles.find(a => a.id == req.params.id);
 
   if (!article) {
@@ -148,40 +115,25 @@ app.put('/api/articles/:id', (req, res) => {
  * /api/articles/{id}:
  *   delete:
  *     summary: Supprimer un article
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         schema:
- *           type: integer
- *     responses:
- *       200:
- *         description: Article supprimé
  */
 app.delete('/api/articles/:id', (req, res) => {
+  stats.delete++;
+
   articles = articles.filter(a => a.id != req.params.id);
 
   res.json({ message: "Article supprimé" });
 });
 
 // 🔍 Rechercher un article
-
 /**
  * @swagger
  * /api/articles/search:
  *   get:
  *     summary: Rechercher des articles
- *     parameters:
- *       - in: query
- *         name: query
- *         required: true
- *         schema:
- *           type: string
- *     responses:
- *       200:
- *         description: Résultats de recherche
  */
 app.get('/api/articles/search', (req, res) => {
+  stats.get++;
+
   const query = req.query.query;
 
   if (!query) {
@@ -195,6 +147,12 @@ app.get('/api/articles/search', (req, res) => {
   res.json(resultats);
 });
 
+// 📊 Route stats (NOUVEAU 🔥)
+app.get('/api/stats', (req, res) => {
+  res.json(stats);
+});
+
+// 🔧 Swagger config
 const options = {
   definition: {
     openapi: "3.0.0",
@@ -209,14 +167,16 @@ const options = {
       }
     ]
   },
-  apis: ["./server.js"], // là où on met les commentaires
+  apis: ["./server.js"],
 };
 
 const swaggerSpec = swaggerJsdoc(options);
 
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
-app.listen(3000, () => {
-  console.log('Serveur lancé sur http://localhost:3000');
-});
+// 🚀 Lancement serveur
+const PORT = process.env.PORT || 3000;
 
+app.listen(PORT, () => {
+  console.log(`Serveur lancé sur http://localhost:${PORT}`);
+});
