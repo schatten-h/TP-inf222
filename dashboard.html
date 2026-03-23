@@ -1,3 +1,4 @@
+<!-- dashboard.html -->
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -54,11 +55,10 @@
 
 <body>
 
-<h1>📊 Dashboard Blog API</h1>
+<h1>Dashboard Blog API</h1>
 
 <div class="container">
 
-  <!-- Stats -->
   <div class="card">
     <h2>Statistiques API</h2>
     <div class="stats">
@@ -70,7 +70,6 @@
     <button onclick="loadStats()">Actualiser</button>
   </div>
 
-  <!-- Articles -->
   <div class="card articles">
     <h2>Articles</h2>
     <ul id="articles"></ul>
@@ -80,35 +79,39 @@
 </div>
 
 <script>
+const API_URL = "https://tp-inf222.onrender.com";
 
-const API_URL = "https://ton-lien.onrender.com";
-
-// Charger stats
 async function loadStats() {
-  const res = await fetch(`${API_URL}/api/stats`);
-  const data = await res.json();
+  try {
+    const res = await fetch(`${API_URL}/api/stats`);
+    const data = await res.json();
 
-  document.getElementById("get").innerText = data.get;
-  document.getElementById("post").innerText = data.post;
-  document.getElementById("put").innerText = data.put;
-  document.getElementById("delete").innerText = data.delete;
+    document.getElementById("get").innerText = data.get;
+    document.getElementById("post").innerText = data.post;
+    document.getElementById("put").innerText = data.put;
+    document.getElementById("delete").innerText = data.delete;
+  } catch (err) {
+    console.error(err);
+  }
 }
 
-// Charger articles
 async function loadArticles() {
-  const res = await fetch(`${API_URL}/api/articles`);
-  const data = await res.json();
+  try {
+    const res = await fetch(`${API_URL}/api/articles`);
+    const data = await res.json();
 
-  const list = document.getElementById("articles");
-  list.innerHTML = "";
+    const list = document.getElementById("articles");
+    list.innerHTML = "";
 
-  data.forEach(article => {
-    const li = document.createElement("li");
-    li.innerText = `${article.titre} - ${article.auteur}`;
-    list.appendChild(li);
-  });
+    data.forEach(article => {
+      const li = document.createElement("li");
+      li.innerText = `${article.titre} - ${article.auteur}`;
+      list.appendChild(li);
+    });
+  } catch (err) {
+    console.error(err);
+  }
 }
-
 </script>
 
 </body>
