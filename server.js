@@ -1,3 +1,4 @@
+```js
 const express = require('express');
 const swaggerUi = require('swagger-ui-express');
 const swaggerJsdoc = require('swagger-jsdoc');
@@ -11,7 +12,9 @@ app.use(cors({
   methods: ["GET", "POST", "PUT", "DELETE"],
   allowedHeaders: ["Content-Type"]
 }));
+
 app.use(express.json());
+
 app.use((req, res, next) => {
   res.header("Access-Control-Allow-Origin", "*");
   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
@@ -29,15 +32,33 @@ let stats = {
 let articles = [
   {
     id: 1,
-    titre: "REVOLUTION",
-    contenu: "Tp de Inf 222",
-    auteur: "Admin_Harry",
+    titre: "Introduction au Backend",
+    contenu: "Comprendre les bases du développement backend avec Node.js",
+    auteur: "Harry",
+    date: new Date()
+  },
+  {
+    id: 2,
+    titre: "API REST avec Express",
+    contenu: "Création d'une API REST complète avec Express et Swagger",
+    auteur: "John Doe",
+    date: new Date()
+  },
+  {
+    id: 3,
+    titre: "Déploiement sur Render",
+    contenu: "Comment déployer une API Node.js gratuitement sur Render",
+    auteur: "Alice",
     date: new Date()
   }
 ];
 
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'dashboard.html'));
+});
+
+app.get('/test', (req, res) => {
+  res.json({ message: "OK" });
 });
 
 /**
@@ -258,3 +279,5 @@ const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Serveur lancé sur http://localhost:${PORT}`);
 });
+```
+
