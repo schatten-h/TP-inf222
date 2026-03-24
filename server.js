@@ -1,4 +1,3 @@
-// server.js
 const express = require('express');
 const swaggerUi = require('swagger-ui-express');
 const swaggerJsdoc = require('swagger-jsdoc');
@@ -7,8 +6,18 @@ const path = require('path');
 
 const app = express();
 
-app.use(cors());
+app.use(cors({
+  origin: "*",
+  methods: ["GET", "POST", "PUT", "DELETE"],
+  allowedHeaders: ["Content-Type"]
+}));
 app.use(express.json());
+app.use((req, res, next) => {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+  res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
+  next();
+});
 
 let stats = {
   get: 0,
@@ -24,13 +33,6 @@ let articles = [
     contenu: "Tp de Inf 222",
     auteur: "Admin_Harry",
     date: new Date()
-  },
-  {
-    id: 2,
-    titre: "Backend",
-    contenu: "EC1 - Inf 222",
-    auteur: "Dr. Jiomekong",
-    date: new Date()
   }
 ];
 
@@ -38,6 +40,28 @@ app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'dashboard.html'));
 });
 
+/**
+ * @swagger
+ * /api/articles:
+ *   post:
+ *     summary: Créer un article
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               titre:
+ *                 type: string
+ *               contenu:
+ *                 type: string
+ *               auteur:
+ *                 type: string
+ *     responses:
+ *       201:
+ *         description: Article créé
+ */
 app.post('/api/articles', (req, res) => {
   stats.post++;
 
@@ -60,11 +84,37 @@ app.post('/api/articles', (req, res) => {
   res.status(201).json(article);
 });
 
+/**
+ * @swagger
+ * /api/articles:
+ *   get:
+ *     summary: Récupérer tous les articles
+ *     responses:
+ *       200:
+ *         description: Liste des articles
+ */
 app.get('/api/articles', (req, res) => {
   stats.get++;
   res.json(articles);
 });
 
+/**
+ * @swagger
+ * /api/articles/{id}:
+ *   get:
+ *     summary: Récupérer un article par ID
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       200:
+ *         description: Article trouvé
+ *       404:
+ *         description: Article non trouvé
+ */
 app.get('/api/articles/:id', (req, res) => {
   stats.get++;
 
@@ -77,6 +127,31 @@ app.get('/api/articles/:id', (req, res) => {
   res.json(article);
 });
 
+/**
+ * @swagger
+ * /api/articles/{id}:
+ *   put:
+ *     summary: Modifier un article
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     requestBody:
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               titre:
+ *                 type: string
+ *               contenu:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Article modifié
+ */
 app.put('/api/articles/:id', (req, res) => {
   stats.put++;
 
@@ -94,6 +169,21 @@ app.put('/api/articles/:id', (req, res) => {
   res.json({ message: "Article modifié", article });
 });
 
+/**
+ * @swagger
+ * /api/articles/{id}:
+ *   delete:
+ *     summary: Supprimer un article
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       200:
+ *         description: Article supprimé
+ */
 app.delete('/api/articles/:id', (req, res) => {
   stats.delete++;
 
@@ -102,6 +192,21 @@ app.delete('/api/articles/:id', (req, res) => {
   res.json({ message: "Article supprimé" });
 });
 
+/**
+ * @swagger
+ * /api/articles/search:
+ *   get:
+ *     summary: Rechercher des articles
+ *     parameters:
+ *       - in: query
+ *         name: query
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Résultats de recherche
+ */
 app.get('/api/articles/search', (req, res) => {
   stats.get++;
 
@@ -119,6 +224,15 @@ app.get('/api/articles/search', (req, res) => {
   res.json(resultats);
 });
 
+/**
+ * @swagger
+ * /api/stats:
+ *   get:
+ *     summary: Statistiques de l'API
+ *     responses:
+ *       200:
+ *         description: Compteurs des requêtes
+ */
 app.get('/api/stats', (req, res) => {
   res.json(stats);
 });
