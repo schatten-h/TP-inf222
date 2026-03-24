@@ -244,12 +244,7 @@ const options = {
       title: "HARRY Blog API",
       version: "1.0.0",
       description: "API REST complète avec Dashboard"
-    },
-    servers: [
-      {
-        url: "https://tp-inf222.onrender.com"
-      }
-    ]
+    }
   },
   apis: ["./server.js"],
 };
